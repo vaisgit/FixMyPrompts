@@ -1,11 +1,13 @@
 
 import { useState, useRef } from 'react';
-import { Copy, Sparkles, Info, RotateCcw, Check, Layers, SlidersHorizontal } from 'lucide-react';
+import { Copy, Sparkles, Info, RotateCcw, Check, SlidersHorizontal, Timer, Zap } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { toast } from '@/hooks/use-toast';
+import TrustIndicator from '@/components/TrustIndicator';
 
 const Index = () => {
   const [inputPrompt, setInputPrompt] = useState('');
@@ -53,7 +55,6 @@ const Index = () => {
     setShowResult(false);
 
     try {
-      // TODO: Replace with actual Cloudflare Worker endpoint
       const response = await fetch('/api/improve-prompt', {
         method: 'POST',
         headers: {
@@ -73,7 +74,6 @@ const Index = () => {
       setImprovedPrompt(data.improvedPrompt);
       setShowResult(true);
       
-      // Smooth scroll to result
       setTimeout(() => {
         resultRef.current?.scrollIntoView({ 
           behavior: 'smooth',
@@ -118,12 +118,12 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
       {/* Header */}
-      <header className="w-full py-4 sm:py-6 px-4">
+      <header className="w-full py-3 sm:py-4 px-4">
         <div className="max-w-4xl mx-auto flex justify-center">
           <img 
             src="/lovable-uploads/385e0a65-e43e-4b8c-a807-16e2af5aacfd.png" 
             alt="FixMyPrompts" 
-            className="h-8 sm:h-12 md:h-14 object-contain"
+            className="h-6 sm:h-8 md:h-10 object-contain"
           />
         </div>
       </header>
@@ -132,40 +132,40 @@ const Index = () => {
       <main className="max-w-4xl mx-auto px-4 pb-16">
         
         {/* Hero Section */}
-        <section className="text-center mb-8 sm:mb-12">
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-slate-900 mb-4 sm:mb-6 leading-tight px-2">
+        <section className="text-center mb-6 sm:mb-8">
+          <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-slate-900 mb-3 sm:mb-4 leading-tight px-2">
             Turn rough ideas into crystal clear AI prompts.
             <br />
             <span className="text-blue-600">Save tokens, save time, get better answers.</span>
-          </h2>
+          </h3>
         </section>
 
         {/* Tool Section */}
-        <section className="mb-12 sm:mb-16">
-          <div className="bg-white rounded-2xl border border-slate-200/60 p-4 sm:p-6 md:p-8 shadow-sm hover:shadow-md transition-shadow duration-300">
+        <section className="mb-8 sm:mb-12">
+          <div className="bg-white/70 backdrop-blur-sm rounded-3xl border border-white/40 p-5 sm:p-7 md:p-9 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] transition-all duration-500">
             
             {/* Input Area */}
-            <div className="mb-4 sm:mb-6">
+            <div className="mb-4 sm:mb-5">
               <Textarea
                 placeholder="Enter your rough prompt idea here... (e.g., 'Help me write about dogs' or 'Make a business plan')"
                 value={inputPrompt}
                 onChange={(e) => setInputPrompt(e.target.value)}
-                className="min-h-[100px] sm:min-h-[120px] text-sm sm:text-base resize-none border-slate-200 focus:border-blue-400 focus:ring-2 focus:ring-blue-100 rounded-xl transition-all duration-200"
+                className="min-h-[100px] sm:min-h-[120px] text-sm sm:text-base resize-none border-0 bg-slate-50/50 focus:bg-white focus:border-blue-200 focus:ring-2 focus:ring-blue-100 rounded-2xl transition-all duration-300 placeholder:text-slate-400"
               />
             </div>
 
             {/* Category Pills */}
-            <div className="mb-6 sm:mb-8">
+            <div className="mb-5 sm:mb-6">
               <p className="text-xs sm:text-sm font-medium text-slate-700 mb-3">Category:</p>
               <div className="flex flex-wrap gap-2">
                 {categories.map((category) => (
                   <Badge
                     key={category}
                     variant={selectedCategory === category ? "default" : "outline"}
-                    className={`cursor-pointer px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm transition-all duration-200 hover:scale-105 rounded-full ${
+                    className={`cursor-pointer px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm transition-all duration-300 hover:scale-105 rounded-full border-2 ${
                       selectedCategory === category 
-                        ? 'bg-blue-600 hover:bg-blue-700 text-white shadow-sm' 
-                        : 'hover:bg-blue-50 hover:border-blue-300 border-slate-200'
+                        ? 'bg-blue-600 hover:bg-blue-700 text-white shadow-lg border-blue-600' 
+                        : 'hover:bg-blue-50 hover:border-blue-300 border-slate-200 bg-white/50'
                     }`}
                     onClick={() => setSelectedCategory(category)}
                   >
@@ -176,11 +176,11 @@ const Index = () => {
             </div>
 
             {/* CTA Button */}
-            <div className="text-center mb-4 sm:mb-6">
+            <div className="text-center mb-4 sm:mb-5">
               <Button
                 onClick={handleSubmit}
                 disabled={isLoading}
-                className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-6 sm:px-8 py-3 sm:py-4 text-base sm:text-lg font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all transform hover:scale-105 disabled:opacity-50 disabled:transform-none w-full sm:w-auto"
+                className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-6 sm:px-8 py-3 sm:py-4 text-base sm:text-lg font-semibold rounded-2xl shadow-lg hover:shadow-xl transition-all transform hover:scale-105 disabled:opacity-50 disabled:transform-none w-full sm:w-auto"
               >
                 {isLoading ? (
                   <>
@@ -196,8 +196,11 @@ const Index = () => {
               </Button>
             </div>
 
+            {/* Trust Indicator */}
+            <TrustIndicator />
+
             {/* Disclaimer */}
-            <div className="flex items-center justify-center text-xs sm:text-sm text-slate-600">
+            <div className="flex items-center justify-center text-xs sm:text-sm text-slate-500 mt-3">
               <Info className="w-3 h-3 sm:w-4 sm:h-4 mr-2 text-blue-500 flex-shrink-0" />
               We never store your prompts
             </div>
@@ -280,24 +283,24 @@ const Index = () => {
             <div className="grid gap-6 sm:gap-8 md:grid-cols-3 text-center">
               <div className="space-y-3">
                 <div className="flex justify-center">
-                  <Sparkles className="w-8 h-8 sm:w-10 sm:h-10 text-blue-100" />
-                </div>
-                <h3 className="text-lg sm:text-xl font-bold">Clarify</h3>
-                <p className="text-sm sm:text-base text-blue-100 leading-relaxed">Cut through the noise and convert rough ideas into actionable prompts.</p>
-              </div>
-              <div className="space-y-3">
-                <div className="flex justify-center">
-                  <Layers className="w-8 h-8 sm:w-10 sm:h-10 text-blue-100" />
-                </div>
-                <h3 className="text-lg sm:text-xl font-bold">Enrich</h3>
-                <p className="text-sm sm:text-base text-blue-100 leading-relaxed">Add context, detail, and precision to make your prompts truly effective.</p>
-              </div>
-              <div className="space-y-3">
-                <div className="flex justify-center">
                   <SlidersHorizontal className="w-8 h-8 sm:w-10 sm:h-10 text-blue-100" />
                 </div>
                 <h3 className="text-lg sm:text-xl font-bold">Structure</h3>
-                <p className="text-sm sm:text-base text-blue-100 leading-relaxed">Shape your prompt with the right format to get exactly what you need.</p>
+                <p className="text-sm sm:text-base text-blue-100 leading-relaxed">Format your prompt the right way to get high-quality results instantly.</p>
+              </div>
+              <div className="space-y-3">
+                <div className="flex justify-center">
+                  <Timer className="w-8 h-8 sm:w-10 sm:h-10 text-blue-100" />
+                </div>
+                <h3 className="text-lg sm:text-xl font-bold">Speed</h3>
+                <p className="text-sm sm:text-base text-blue-100 leading-relaxed">Skip prompt trial-and-error and get to the answer faster.</p>
+              </div>
+              <div className="space-y-3">
+                <div className="flex justify-center">
+                  <Zap className="w-8 h-8 sm:w-10 sm:h-10 text-blue-100" />
+                </div>
+                <h3 className="text-lg sm:text-xl font-bold">Efficiency</h3>
+                <p className="text-sm sm:text-base text-blue-100 leading-relaxed">Make every token count — get more done without burning through credits.</p>
               </div>
             </div>
           </div>
@@ -308,9 +311,9 @@ const Index = () => {
       <footer className="bg-slate-900 text-white py-8 sm:py-12">
         <div className="max-w-4xl mx-auto px-4 text-center">
           <div className="mb-4">
-            <a href="#" className="text-slate-300 hover:text-white mx-3 sm:mx-4 transition-colors text-sm sm:text-base">Privacy Policy</a>
-            <a href="#" className="text-slate-300 hover:text-white mx-3 sm:mx-4 transition-colors text-sm sm:text-base">Contact</a>
-            <a href="#" className="text-slate-300 hover:text-white mx-3 sm:mx-4 transition-colors text-sm sm:text-base">Blog</a>
+            <Link to="/privacy-policy" className="text-slate-300 hover:text-white mx-3 sm:mx-4 transition-colors text-sm sm:text-base">Privacy Policy</Link>
+            <Link to="/contact" className="text-slate-300 hover:text-white mx-3 sm:mx-4 transition-colors text-sm sm:text-base">Contact</Link>
+            <Link to="/blog" className="text-slate-300 hover:text-white mx-3 sm:mx-4 transition-colors text-sm sm:text-base">Blog</Link>
           </div>
           <p className="text-slate-400 text-xs sm:text-sm">
             Copyright 2025, FixMyPrompts.
