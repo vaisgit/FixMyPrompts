@@ -1,6 +1,6 @@
 
 import { useState, useRef } from 'react';
-import { Copy, Sparkles, Info, RotateCcw, Check } from 'lucide-react';
+import { Copy, Sparkles, Info, RotateCcw, Check, Layers, SlidersHorizontal } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent } from '@/components/ui/card';
@@ -118,12 +118,12 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
       {/* Header */}
-      <header className="w-full py-6 px-4">
+      <header className="w-full py-4 sm:py-6 px-4">
         <div className="max-w-4xl mx-auto flex justify-center">
           <img 
             src="/lovable-uploads/385e0a65-e43e-4b8c-a807-16e2af5aacfd.png" 
             alt="FixMyPrompts" 
-            className="h-12 md:h-16 object-contain"
+            className="h-8 sm:h-12 md:h-14 object-contain"
           />
         </div>
       </header>
@@ -132,141 +132,138 @@ const Index = () => {
       <main className="max-w-4xl mx-auto px-4 pb-16">
         
         {/* Hero Section */}
-        <section className="text-center mb-12">
-          <h1 className="text-4xl md:text-5xl font-bold text-slate-900 mb-6 leading-tight">
+        <section className="text-center mb-8 sm:mb-12">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-slate-900 mb-4 sm:mb-6 leading-tight px-2">
             Turn rough ideas into crystal clear AI prompts.
             <br />
             <span className="text-blue-600">Save tokens, save time, get better answers.</span>
-          </h1>
+          </h2>
         </section>
 
         {/* Tool Section */}
-        <section className="mb-16">
-          <Card className="shadow-xl border-0 bg-white/80 backdrop-blur-sm">
-            <CardContent className="p-6 md:p-8">
-              
-              {/* Input Area */}
-              <div className="mb-6">
-                <Textarea
-                  placeholder="Enter your rough prompt idea here... (e.g., 'Help me write about dogs' or 'Make a business plan')"
-                  value={inputPrompt}
-                  onChange={(e) => setInputPrompt(e.target.value)}
-                  className="min-h-[120px] text-base resize-none border-2 focus:border-blue-500 transition-colors"
-                />
-              </div>
+        <section className="mb-12 sm:mb-16">
+          <div className="bg-white rounded-2xl border border-slate-200/60 p-4 sm:p-6 md:p-8 shadow-sm hover:shadow-md transition-shadow duration-300">
+            
+            {/* Input Area */}
+            <div className="mb-4 sm:mb-6">
+              <Textarea
+                placeholder="Enter your rough prompt idea here... (e.g., 'Help me write about dogs' or 'Make a business plan')"
+                value={inputPrompt}
+                onChange={(e) => setInputPrompt(e.target.value)}
+                className="min-h-[100px] sm:min-h-[120px] text-sm sm:text-base resize-none border-slate-200 focus:border-blue-400 focus:ring-2 focus:ring-blue-100 rounded-xl transition-all duration-200"
+              />
+            </div>
 
-              {/* Category Pills */}
-              <div className="mb-6">
-                <p className="text-sm font-medium text-slate-700 mb-3">Category:</p>
-                <div className="flex flex-wrap gap-2">
-                  {categories.map((category) => (
-                    <Badge
-                      key={category}
-                      variant={selectedCategory === category ? "default" : "outline"}
-                      className={`cursor-pointer px-4 py-2 text-sm transition-all hover:scale-105 ${
-                        selectedCategory === category 
-                          ? 'bg-blue-600 hover:bg-blue-700 text-white' 
-                          : 'hover:bg-blue-50 hover:border-blue-300'
-                      }`}
-                      onClick={() => setSelectedCategory(category)}
-                    >
-                      {category}
-                    </Badge>
-                  ))}
-                </div>
+            {/* Category Pills */}
+            <div className="mb-6 sm:mb-8">
+              <p className="text-xs sm:text-sm font-medium text-slate-700 mb-3">Category:</p>
+              <div className="flex flex-wrap gap-2">
+                {categories.map((category) => (
+                  <Badge
+                    key={category}
+                    variant={selectedCategory === category ? "default" : "outline"}
+                    className={`cursor-pointer px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm transition-all duration-200 hover:scale-105 rounded-full ${
+                      selectedCategory === category 
+                        ? 'bg-blue-600 hover:bg-blue-700 text-white shadow-sm' 
+                        : 'hover:bg-blue-50 hover:border-blue-300 border-slate-200'
+                    }`}
+                    onClick={() => setSelectedCategory(category)}
+                  >
+                    {category}
+                  </Badge>
+                ))}
               </div>
+            </div>
 
-              {/* CTA Button */}
-              <div className="text-center mb-4">
-                <Button
-                  onClick={handleSubmit}
-                  disabled={isLoading}
-                  className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-8 py-6 text-lg font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all transform hover:scale-105 disabled:opacity-50 disabled:transform-none"
-                >
-                  {isLoading ? (
-                    <>
-                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-3"></div>
-                      Improving...
-                    </>
-                  ) : (
-                    <>
-                      <Sparkles className="w-5 h-5 mr-3 animate-pulse" />
-                      Fix my prompt
-                    </>
-                  )}
-                </Button>
-              </div>
+            {/* CTA Button */}
+            <div className="text-center mb-4 sm:mb-6">
+              <Button
+                onClick={handleSubmit}
+                disabled={isLoading}
+                className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-6 sm:px-8 py-3 sm:py-4 text-base sm:text-lg font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all transform hover:scale-105 disabled:opacity-50 disabled:transform-none w-full sm:w-auto"
+              >
+                {isLoading ? (
+                  <>
+                    <div className="animate-spin rounded-full h-4 w-4 sm:h-5 sm:w-5 border-b-2 border-white mr-2 sm:mr-3"></div>
+                    Improving...
+                  </>
+                ) : (
+                  <>
+                    <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 mr-2 sm:mr-3 animate-pulse" />
+                    Fix my prompt
+                  </>
+                )}
+              </Button>
+            </div>
 
-              {/* Disclaimer */}
-              <div className="flex items-center justify-center text-sm text-slate-600">
-                <Info className="w-4 h-4 mr-2 text-blue-500" />
-                We never store your prompts
-              </div>
-            </CardContent>
-          </Card>
+            {/* Disclaimer */}
+            <div className="flex items-center justify-center text-xs sm:text-sm text-slate-600">
+              <Info className="w-3 h-3 sm:w-4 sm:h-4 mr-2 text-blue-500 flex-shrink-0" />
+              We never store your prompts
+            </div>
+          </div>
         </section>
 
         {/* Result Section */}
         {showResult && (
-          <section ref={resultRef} className="mb-16 animate-fade-in">
-            <Card className="shadow-xl border-0 bg-gradient-to-r from-green-50 to-blue-50">
-              <CardContent className="p-6 md:p-8">
-                <h3 className="text-xl font-semibold text-slate-900 mb-4 flex items-center">
-                  <Sparkles className="w-5 h-5 mr-2 text-green-600" />
-                  Your Improved Prompt
-                </h3>
-                <div className="bg-white rounded-lg p-4 mb-4 border-2 border-green-200">
-                  <p className="text-slate-800 leading-relaxed whitespace-pre-wrap">
-                    {improvedPrompt}
-                  </p>
-                </div>
-                <div className="flex gap-3 justify-center sm:justify-start">
-                  <Button
-                    onClick={handleCopy}
-                    variant="outline"
-                    className="border-green-300 hover:bg-green-50"
-                  >
-                    {copied ? (
-                      <>
-                        <Check className="w-4 h-4 mr-2 text-green-600" />
-                        Copied!
-                      </>
-                    ) : (
-                      <>
-                        <Copy className="w-4 h-4 mr-2" />
-                        Copy
-                      </>
-                    )}
-                  </Button>
-                  <Button
-                    onClick={handleRetry}
-                    variant="outline"
-                    disabled={isLoading}
-                  >
-                    <RotateCcw className="w-4 h-4 mr-2" />
-                    Retry
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
+          <section ref={resultRef} className="mb-12 sm:mb-16 animate-fade-in">
+            <div className="bg-gradient-to-r from-green-50 to-blue-50 rounded-2xl border border-green-200/60 p-4 sm:p-6 md:p-8 shadow-sm">
+              <h3 className="text-lg sm:text-xl font-semibold text-slate-900 mb-4 flex items-center">
+                <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 mr-2 text-green-600" />
+                Your Improved Prompt
+              </h3>
+              <div className="bg-white rounded-xl p-3 sm:p-4 mb-4 border border-green-200/80">
+                <p className="text-sm sm:text-base text-slate-800 leading-relaxed whitespace-pre-wrap">
+                  {improvedPrompt}
+                </p>
+              </div>
+              <div className="flex flex-col sm:flex-row gap-3 justify-center sm:justify-start">
+                <Button
+                  onClick={handleCopy}
+                  variant="outline"
+                  className="border-green-300 hover:bg-green-50 rounded-lg"
+                >
+                  {copied ? (
+                    <>
+                      <Check className="w-4 h-4 mr-2 text-green-600" />
+                      Copied!
+                    </>
+                  ) : (
+                    <>
+                      <Copy className="w-4 h-4 mr-2" />
+                      Copy
+                    </>
+                  )}
+                </Button>
+                <Button
+                  onClick={handleRetry}
+                  variant="outline"
+                  disabled={isLoading}
+                  className="rounded-lg"
+                >
+                  <RotateCcw className="w-4 h-4 mr-2" />
+                  Retry
+                </Button>
+              </div>
+            </div>
           </section>
         )}
 
         {/* Examples Section */}
-        <section className="mb-16">
-          <h2 className="text-3xl font-bold text-center text-slate-900 mb-8">
+        <section className="mb-12 sm:mb-16">
+          <h2 className="text-2xl sm:text-3xl font-bold text-center text-slate-900 mb-6 sm:mb-8">
             See it in action
           </h2>
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid gap-4 sm:gap-6 md:grid-cols-2 lg:grid-cols-3">
             {exampleCards.map((example, index) => (
-              <Card key={index} className="shadow-lg hover:shadow-xl transition-shadow duration-300">
-                <CardContent className="p-6">
+              <Card key={index} className="shadow-sm hover:shadow-md transition-shadow duration-300 border-slate-200/60 rounded-xl">
+                <CardContent className="p-4 sm:p-6">
                   <div className="mb-4">
-                    <Badge variant="destructive" className="mb-2 text-xs">BEFORE</Badge>
+                    <Badge variant="destructive" className="mb-2 text-xs rounded-full">BEFORE</Badge>
                     <p className="text-slate-600 text-sm italic">"{example.before}"</p>
                   </div>
                   <div>
-                    <Badge variant="default" className="mb-2 text-xs bg-green-600">AFTER</Badge>
+                    <Badge variant="default" className="mb-2 text-xs bg-green-600 rounded-full">AFTER</Badge>
                     <p className="text-slate-800 text-sm font-medium leading-relaxed">
                       {example.after}
                     </p>
@@ -277,38 +274,45 @@ const Index = () => {
           </div>
         </section>
 
-        {/* Benefits Bar */}
-        <section className="mb-16">
-          <Card className="bg-gradient-to-r from-blue-600 to-purple-600 text-white border-0">
-            <CardContent className="p-8">
-              <div className="grid md:grid-cols-3 gap-8 text-center">
-                <div>
-                  <h3 className="text-xl font-bold mb-2">Sharpen</h3>
-                  <p className="text-blue-100">Transform vague ideas into precise instructions</p>
+        {/* Benefits Section */}
+        <section className="mb-12 sm:mb-16">
+          <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white border-0 rounded-2xl p-6 sm:p-8">
+            <div className="grid gap-6 sm:gap-8 md:grid-cols-3 text-center">
+              <div className="space-y-3">
+                <div className="flex justify-center">
+                  <Sparkles className="w-8 h-8 sm:w-10 sm:h-10 text-blue-100" />
                 </div>
-                <div>
-                  <h3 className="text-xl font-bold mb-2">Expand</h3>
-                  <p className="text-blue-100">Add crucial context and specific requirements</p>
-                </div>
-                <div>
-                  <h3 className="text-xl font-bold mb-2">Guide</h3>
-                  <p className="text-blue-100">Structure prompts for optimal AI responses</p>
-                </div>
+                <h3 className="text-lg sm:text-xl font-bold">Clarify</h3>
+                <p className="text-sm sm:text-base text-blue-100 leading-relaxed">Cut through the noise and convert rough ideas into actionable prompts.</p>
               </div>
-            </CardContent>
-          </Card>
+              <div className="space-y-3">
+                <div className="flex justify-center">
+                  <Layers className="w-8 h-8 sm:w-10 sm:h-10 text-blue-100" />
+                </div>
+                <h3 className="text-lg sm:text-xl font-bold">Enrich</h3>
+                <p className="text-sm sm:text-base text-blue-100 leading-relaxed">Add context, detail, and precision to make your prompts truly effective.</p>
+              </div>
+              <div className="space-y-3">
+                <div className="flex justify-center">
+                  <SlidersHorizontal className="w-8 h-8 sm:w-10 sm:h-10 text-blue-100" />
+                </div>
+                <h3 className="text-lg sm:text-xl font-bold">Structure</h3>
+                <p className="text-sm sm:text-base text-blue-100 leading-relaxed">Shape your prompt with the right format to get exactly what you need.</p>
+              </div>
+            </div>
+          </div>
         </section>
       </main>
 
       {/* Footer */}
-      <footer className="bg-slate-900 text-white py-12">
+      <footer className="bg-slate-900 text-white py-8 sm:py-12">
         <div className="max-w-4xl mx-auto px-4 text-center">
           <div className="mb-4">
-            <a href="#" className="text-slate-300 hover:text-white mx-4 transition-colors">Privacy Policy</a>
-            <a href="#" className="text-slate-300 hover:text-white mx-4 transition-colors">Contact</a>
-            <a href="#" className="text-slate-300 hover:text-white mx-4 transition-colors">Blog</a>
+            <a href="#" className="text-slate-300 hover:text-white mx-3 sm:mx-4 transition-colors text-sm sm:text-base">Privacy Policy</a>
+            <a href="#" className="text-slate-300 hover:text-white mx-3 sm:mx-4 transition-colors text-sm sm:text-base">Contact</a>
+            <a href="#" className="text-slate-300 hover:text-white mx-3 sm:mx-4 transition-colors text-sm sm:text-base">Blog</a>
           </div>
-          <p className="text-slate-400 text-sm">
+          <p className="text-slate-400 text-xs sm:text-sm">
             Copyright 2025, FixMyPrompts.
           </p>
         </div>
