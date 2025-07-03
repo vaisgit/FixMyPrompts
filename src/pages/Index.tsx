@@ -1,6 +1,5 @@
-
 import { useState, useRef } from 'react';
-import { Copy, Sparkles, Info, RotateCcw, Check, SlidersHorizontal, Timer, Zap } from 'lucide-react';
+import { Copy, Sparkles, Info, RotateCcw, Check, SlidersHorizontal, Timer, Zap, ThumbsUp, ThumbsDown } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
@@ -17,6 +16,7 @@ const Index = () => {
   const [showResult, setShowResult] = useState(false);
   const [copied, setCopied] = useState(false);
   const resultRef = useRef<HTMLDivElement>(null);
+  const [feedbackState, setFeedbackState] = useState<{ [promptId: string]: 'liked' | 'disliked' | null }>({});
 
   const categories = [
     'General',
@@ -55,7 +55,7 @@ const Index = () => {
     setShowResult(false);
 
     try {
-      const response = await fetch('/api/improve-prompt', {
+      const response = await fetch('/improve', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -115,34 +115,48 @@ const Index = () => {
     handleSubmit();
   };
 
+  const promptId = improvedPrompt ? btoa(unescape(encodeURIComponent(improvedPrompt))).slice(0, 16) : '';
+
+  const handleFeedback = async (liked: boolean) => {
+    if (!promptId || feedbackState[promptId]) return;
+    try {
+      await fetch('/feedback', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ promptId, liked }),
+      });
+      setFeedbackState((prev) => ({ ...prev, [promptId]: liked ? 'liked' : 'disliked' }));
+    } catch (e) {
+      toast({ title: 'Feedback failed', description: 'Please try again later.', variant: 'destructive' });
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
       {/* Header */}
-      <header className="w-full py-3 sm:py-4 px-4">
+      <header className="w-full pt-6 pb-3 sm:pt-8 sm:pb-4 px-4">
         <div className="max-w-4xl mx-auto flex justify-center">
           <img 
             src="/lovable-uploads/385e0a65-e43e-4b8c-a807-16e2af5aacfd.png" 
             alt="FixMyPrompts" 
-            className="h-6 sm:h-8 md:h-10 object-contain"
+            className="h-14 object-contain"
           />
         </div>
       </header>
 
       {/* Main Content */}
-      <main className="max-w-4xl mx-auto px-4 pb-16">
+      <main className="max-w-4xl mx-auto px-4">
         
         {/* Hero Section */}
         <section className="text-center mb-6 sm:mb-8">
           <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-slate-900 mb-3 sm:mb-4 leading-tight px-2">
             Turn rough ideas into crystal clear AI prompts.
-            <br />
-            <span className="text-blue-600">Save tokens, save time, get better answers.</span>
           </h3>
         </section>
 
         {/* Tool Section */}
         <section className="mb-8 sm:mb-12">
-          <div className="bg-white/70 backdrop-blur-sm rounded-3xl border border-white/40 p-5 sm:p-7 md:p-9 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] transition-all duration-500">
+          <div className="bg-white/70 backdrop-blur-sm rounded-3xl border border-white/40 p-4 sm:p-5 md:p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] transition-all duration-500">
             
             {/* Input Area */}
             <div className="mb-4 sm:mb-5">
@@ -190,7 +204,7 @@ const Index = () => {
                 ) : (
                   <>
                     <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 mr-2 sm:mr-3 animate-pulse" />
-                    Fix my prompt
+                    Fix my prompt (It's free!)
                   </>
                 )}
               </Button>
@@ -198,12 +212,6 @@ const Index = () => {
 
             {/* Trust Indicator */}
             <TrustIndicator />
-
-            {/* Disclaimer */}
-            <div className="flex items-center justify-center text-xs sm:text-sm text-slate-500 mt-3">
-              <Info className="w-3 h-3 sm:w-4 sm:h-4 mr-2 text-blue-500 flex-shrink-0" />
-              We never store your prompts
-            </div>
           </div>
         </section>
 
@@ -220,33 +228,56 @@ const Index = () => {
                   {improvedPrompt}
                 </p>
               </div>
-              <div className="flex flex-col sm:flex-row gap-3 justify-center sm:justify-start">
-                <Button
-                  onClick={handleCopy}
-                  variant="outline"
-                  className="border-green-300 hover:bg-green-50 rounded-lg"
-                >
-                  {copied ? (
-                    <>
-                      <Check className="w-4 h-4 mr-2 text-green-600" />
-                      Copied!
-                    </>
-                  ) : (
-                    <>
-                      <Copy className="w-4 h-4 mr-2" />
-                      Copy
-                    </>
-                  )}
-                </Button>
-                <Button
-                  onClick={handleRetry}
-                  variant="outline"
-                  disabled={isLoading}
-                  className="rounded-lg"
-                >
-                  <RotateCcw className="w-4 h-4 mr-2" />
-                  Retry
-                </Button>
+              <div className="flex flex-col sm:flex-row gap-3 justify-between items-center">
+                <div className="flex flex-col sm:flex-row gap-3 justify-center sm:justify-start w-full sm:w-auto">
+                  <Button
+                    onClick={handleCopy}
+                    variant="outline"
+                    className="border-green-300 hover:bg-green-50 rounded-lg"
+                  >
+                    {copied ? (
+                      <>
+                        <Check className="w-4 h-4 mr-2 text-green-600" />
+                        Copied!
+                      </>
+                    ) : (
+                      <>
+                        <Copy className="w-4 h-4 mr-2" />
+                        Copy
+                      </>
+                    )}
+                  </Button>
+                  <Button
+                    onClick={handleRetry}
+                    variant="outline"
+                    disabled={isLoading}
+                    className="rounded-lg"
+                  >
+                    <RotateCcw className="w-4 h-4 mr-2" />
+                    Retry
+                  </Button>
+                </div>
+                <div className="flex flex-col items-end gap-1 w-full sm:w-auto">
+                  <span className="text-xs text-slate-500 mb-1">How did we do?</span>
+                  <div className="flex gap-2">
+                    <Button
+                      variant="outline"
+                      className={`rounded-lg flex items-center gap-2 ${feedbackState[promptId] === 'liked' ? 'border-blue-500 bg-blue-50 shadow' : ''}`}
+                      onClick={() => handleFeedback(true)}
+                      disabled={!!feedbackState[promptId]}
+                    >
+                      <ThumbsUp className="w-4 h-4" /> I love it
+                    </Button>
+                    <Button
+                      variant="outline"
+                      className={`rounded-lg flex items-center gap-2 ${feedbackState[promptId] === 'disliked' ? 'border-red-500 bg-red-50 shadow' : ''}`}
+                      onClick={() => handleFeedback(false)}
+                      disabled={!!feedbackState[promptId]}
+                    >
+                      <ThumbsDown className="w-4 h-4" /> Not good
+                    </Button>
+                  </div>
+                </div>
               </div>
             </div>
           </section>

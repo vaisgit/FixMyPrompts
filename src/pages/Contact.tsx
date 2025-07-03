@@ -1,4 +1,3 @@
-
 import { Link } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
 
@@ -25,7 +24,23 @@ const Contact = () => {
       <main className="max-w-4xl mx-auto px-4 py-16">
         <div className="text-center">
           <h1 className="text-2xl font-bold text-slate-900 mb-4">Contact</h1>
-          <p className="text-lg text-slate-600">Coming Soon</p>
+          <div className="w-full flex justify-center">
+            <div className="w-full max-w-2xl">
+              <style>{`
+                @media screen and (max-width: 600px) {
+                  .calendly-inline-widget { height: 500px !important; }
+                }
+              `}</style>
+              <iframe
+                src="https://calendly.com/vaisakhans/contact-fixmyprompts?hide_gdpr_banner=1"
+                title="Book a call with FixMyPrompts"
+                className="calendly-inline-widget w-full min-h-[650px] border-0 rounded-xl shadow-lg"
+                style={{ minHeight: '650px', height: '650px', width: '100%' }}
+                allowTransparency={true}
+                frameBorder="0"
+              ></iframe>
+            </div>
+          </div>
         </div>
       </main>
     </div>

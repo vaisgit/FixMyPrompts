@@ -3,11 +3,10 @@ import { CheckCircle, Globe, Timer, MessageCircle, ShieldCheck } from 'lucide-re
 
 const TrustIndicator = () => {
   const trustItems = [
-    { text: "100K+ prompts improved", icon: CheckCircle },
-    { text: "Used in 15+ countries", icon: Globe },
-    { text: "1.4s avg response time", icon: Timer },
-    { text: "Based on real expert feedback", icon: MessageCircle },
-    { text: "Zero prompt storage", icon: ShieldCheck }
+    { text: "We do not collect or store user prompts", icon: ShieldCheck },
+    { text: "10K+ prompts improved so far", icon: CheckCircle },
+    { text: "Used in 5+ countries", icon: Globe },
+    { text: "Based on real experts' feedback", icon: MessageCircle }
   ];
 
   return (

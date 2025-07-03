@@ -1,0 +1,23 @@
+# 'main' points to the Worker entry file. It does NOT determine the route; the route is set below.
+name = "fixmyprompts"
+main = "public/api/improve-prompt.js"
+compatibility_date = "2024-06-01"
+
+# Set secrets like GEMINI_API_KEY using `wrangler secret put GEMINI_API_KEY`
+
+[observability]
+enabled = true
+head_sampling_rate = 1
+
+[[kv_namespaces]]
+binding = "PROMPT_STATS_KV"
+id = "5beb7030128b4778a00f99a9cf71e0e1"
+
+[durable_objects]
+bindings = [
+  { name = "PROMPTS_FEEDBACK", class_name = "PromptsFeedback" }
+]
+
+[[migrations]]
+tag = "v3"
+new_sqlite_classes = [ "PromptsFeedback" ] 
