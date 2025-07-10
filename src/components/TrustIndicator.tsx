@@ -5,7 +5,7 @@ const TrustIndicator = () => {
   const trustItems = [
     { text: "We do not collect or store user prompts", icon: ShieldCheck },
     { text: "10K+ prompts improved so far", icon: CheckCircle },
-    { text: "Used in 5+ countries", icon: Globe },
+    { text: "Used in 10+ countries", icon: Globe },
     { text: "Based on real experts' feedback", icon: MessageCircle }
   ];
 

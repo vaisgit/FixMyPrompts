@@ -4,6 +4,8 @@ main = "public/api/improve-prompt.js"
 compatibility_date = "2024-06-01"
 
 # Set secrets like GEMINI_API_KEY using `wrangler secret put GEMINI_API_KEY`
+# Optional: Set EXTENSION_TOKEN for Chrome extension authentication
+# wrangler secret put EXTENSION_TOKEN
 
 [observability]
 enabled = true

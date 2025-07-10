@@ -1,0 +1,137 @@
+/* styles.css */
+/* Floating button */
+#fixmyprompts-fab {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  width: 56px;
+  height: 56px;
+  border: none;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+  z-index: 2147483647;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: box-shadow 0.2s;
+}
+#fixmyprompts-fab:hover {
+  box-shadow: 0 4px 16px rgba(37,99,235,0.18);
+}
+#fixmyprompts-fab img {
+  width: 32px;
+  height: 32px;
+  display: block;
+}
+
+/* Overlay */
+#fixmyprompts-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.18);
+  z-index: 2147483647;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.fixmyprompts-modal {
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+  padding: 28px 20px 20px 20px;
+  max-width: 370px;
+  width: 96vw;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  position: relative;
+}
+.fixmyprompts-title {
+  margin: 0 0 16px 0;
+  font-size: 1.3rem;
+  font-weight: bold;
+  color: #2563eb;
+  text-align: center;
+  letter-spacing: 0.01em;
+}
+.fixmyprompts-textarea {
+  width: 100%;
+  min-height: 80px;
+  resize: vertical;
+  margin-bottom: 16px;
+  font-size: 1rem;
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid #d1d5db;
+  background: #f8fafc;
+  transition: border 0.2s;
+  color: #111;
+}
+.fixmyprompts-textarea:focus {
+  border: 1.5px solid #2563eb;
+  outline: none;
+}
+.fixmyprompts-categories {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 10px;
+  margin-bottom: 18px;
+  font-size: 0.98rem;
+  justify-content: center;
+}
+.fixmyprompts-pill {
+  border: none;
+  border-radius: 999px;
+  background: #f1f5f9;
+  color: #2563eb;
+  padding: 7px 16px;
+  font-size: 0.98rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.18s, color 0.18s;
+  margin-bottom: 2px;
+  outline: none;
+}
+.fixmyprompts-pill.selected,
+.fixmyprompts-pill:focus {
+  background: #2563eb;
+  color: #fff;
+  font-weight: 600;
+}
+.fixmyprompts-action {
+  background: #2563eb;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  padding: 12px 0;
+  font-size: 1.08rem;
+  font-weight: bold;
+  cursor: pointer;
+  margin-bottom: 8px;
+  transition: background 0.2s;
+  box-shadow: 0 2px 8px rgba(37,99,235,0.08);
+}
+.fixmyprompts-action:disabled {
+  background: #a5b4fc;
+  cursor: not-allowed;
+}
+.fixmyprompts-close {
+  position: absolute;
+  top: 8px;
+  right: 12px;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: #888;
+  cursor: pointer;
+  line-height: 1;
+}
+@media (max-width: 400px) {
+  .fixmyprompts-modal {
+    max-width: 99vw;
+    padding: 12px 2vw 12px 2vw;
+  }
+} 
