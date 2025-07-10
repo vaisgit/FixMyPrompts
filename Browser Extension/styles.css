@@ -1,137 +1,183 @@
 /* styles.css */
-/* Floating button */
-#fixmyprompts-fab {
+#fixmyprompts-score-card {
+  --fmp-card-bg: #ffffff;
+  --fmp-card-radius: 1.25rem; /* Slightly more rounded */
+  --fmp-card-padding: 0.8rem 1rem;
+  --fmp-text-primary: #000000;
+  
+  --fmp-score-color-bad: #ef4444;
+  --fmp-score-color-ok: #f59e0b;
+  --fmp-score-color-good: #22c55e;
+  --fmp-score-color-base: #e5e7eb;
+  
+  --fmp-font-size-label: 0.85rem; /* Larger text */
+  --fmp-font-size-score: 1.65rem;
+  --fmp-font-size-total: 0.75rem;
+  --fmp-font-size-action: 0.8rem;
+
+  --fmp-transition-speed: 200ms;
+}
+
+#fixmyprompts-score-card {
   position: fixed;
   right: 24px;
   bottom: 24px;
-  width: 56px;
-  height: 56px;
-  border: none;
-  border-radius: 50%;
-  background: #fff;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+  width: 240px;
+  background: var(--fmp-card-bg);
+  border-radius: var(--fmp-card-radius);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.12);
   z-index: 2147483647;
-  cursor: pointer;
-  padding: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: box-shadow 0.2s;
-}
-#fixmyprompts-fab:hover {
-  box-shadow: 0 4px 16px rgba(37,99,235,0.18);
-}
-#fixmyprompts-fab img {
-  width: 32px;
-  height: 32px;
-  display: block;
-}
-
-/* Overlay */
-#fixmyprompts-overlay {
-  position: fixed;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background: rgba(0,0,0,0.18);
-  z-index: 2147483647;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.fixmyprompts-modal {
-  background: #fff;
-  border-radius: 18px;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.18);
-  padding: 28px 20px 20px 20px;
-  max-width: 370px;
-  width: 96vw;
+  padding: var(--fmp-card-padding);
   display: flex;
   flex-direction: column;
-  align-items: stretch;
+  gap: 0.75rem;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  color: var(--fmp-text-primary);
+  transition: transform var(--fmp-transition-speed) ease-out, opacity var(--fmp-transition-speed) ease-out;
+  transform: scale(0.95);
+  opacity: 0;
+  pointer-events: none;
+  cursor: move;
+  user-select: none;
+}
+
+#fixmyprompts-score-card.visible {
+  transform: scale(1);
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.fmp-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.fmp-score-label {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.7rem; /* Increased gap */
+  flex-grow: 1; /* Allow this to take up available space */
+  font-weight: 600;
+  font-size: var(--fmp-font-size-label);
+  line-height: 1;
+  text-transform: uppercase;
+  color: var(--fmp-text-primary);
+}
+
+.fmp-logo-img {
+  height: 30px; /* Increased height */
+  width: auto;
+}
+
+.fmp-gauge {
+  width: 70px;
+  height: 70px;
   position: relative;
 }
-.fixmyprompts-title {
-  margin: 0 0 16px 0;
-  font-size: 1.3rem;
-  font-weight: bold;
-  color: #2563eb;
-  text-align: center;
-  letter-spacing: 0.01em;
-}
-.fixmyprompts-textarea {
+
+.fmp-gauge-svg {
   width: 100%;
-  min-height: 80px;
-  resize: vertical;
-  margin-bottom: 16px;
-  font-size: 1rem;
-  padding: 10px;
-  border-radius: 10px;
-  border: 1px solid #d1d5db;
-  background: #f8fafc;
-  transition: border 0.2s;
-  color: #111;
+  height: 100%;
+  transform: rotate(-90deg); /* Start from the top */
 }
-.fixmyprompts-textarea:focus {
-  border: 1.5px solid #2563eb;
-  outline: none;
+
+.fmp-gauge-bg {
+  fill: none;
+  stroke: var(--fmp-score-color-base);
+  stroke-width: 9;
 }
-.fixmyprompts-categories {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px 10px;
-  margin-bottom: 18px;
-  font-size: 0.98rem;
-  justify-content: center;
+
+.fmp-gauge-fg {
+  fill: none;
+  stroke: var(--fmp-score-color-good); /* Default color */
+  stroke-width: 9;
+  stroke-linecap: round;
+  transition: stroke var(--fmp-transition-speed), stroke-dashoffset var(--fmp-transition-speed) ease-out;
 }
-.fixmyprompts-pill {
-  border: none;
-  border-radius: 999px;
-  background: #f1f5f9;
-  color: #2563eb;
-  padding: 7px 16px;
-  font-size: 0.98rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: background 0.18s, color 0.18s;
-  margin-bottom: 2px;
-  outline: none;
-}
-.fixmyprompts-pill.selected,
-.fixmyprompts-pill:focus {
-  background: #2563eb;
-  color: #fff;
-  font-weight: 600;
-}
-.fixmyprompts-action {
-  background: #2563eb;
-  color: #fff;
-  border: none;
-  border-radius: 10px;
-  padding: 12px 0;
-  font-size: 1.08rem;
-  font-weight: bold;
-  cursor: pointer;
-  margin-bottom: 8px;
-  transition: background 0.2s;
-  box-shadow: 0 2px 8px rgba(37,99,235,0.08);
-}
-.fixmyprompts-action:disabled {
-  background: #a5b4fc;
-  cursor: not-allowed;
-}
-.fixmyprompts-close {
+
+.fmp-gauge-text {
   position: absolute;
-  top: 8px;
-  right: 12px;
-  background: none;
-  border: none;
-  font-size: 1.5rem;
-  color: #888;
-  cursor: pointer;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
   line-height: 1;
 }
-@media (max-width: 400px) {
-  .fixmyprompts-modal {
-    max-width: 99vw;
-    padding: 12px 2vw 12px 2vw;
-  }
+
+#fixmyprompts-score-card #fmp-score-value {
+  font-size: var(--fmp-font-size-score);
+  font-weight: 700;
+  line-height: 1; /* Ensures tight vertical spacing */
+  color: var(--fmp-text-primary);
+  transition: color var(--fmp-transition-speed);
+}
+
+#fixmyprompts-score-card #fmp-score-value.is-bad { color: var(--fmp-score-color-bad); }
+#fixmyprompts-score-card #fmp-score-value.is-ok { color: var(--fmp-score-color-ok); }
+#fixmyprompts-score-card #fmp-score-value.is-good { color: var(--fmp-score-color-good); }
+#fixmyprompts-score-card #fmp-score-value.is-triple-digit {
+  font-size: 1.3rem; /* Shrink to fit 3 digits */
+}
+
+#fixmyprompts-score-card #fmp-score-total {
+  font-size: var(--fmp-font-size-total);
+  color: var(--fmp-text-primary);
+}
+
+#fixmyprompts-score-card .fmp-action-bar {
+  width: 100%;
+  padding: 0.6rem;
+  border-radius: 0.75rem;
+  border: 1px solid transparent;
+  background: var(--fmp-score-color-base);
+  color: var(--fmp-text-primary); /* Force black color */
+  font-size: var(--fmp-font-size-action);
+  font-weight: 600;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  transition: background-color var(--fmp-transition-speed), color var(--fmp-transition-speed), border-color var(--fmp-transition-speed);
+  cursor: pointer;
+}
+
+#fixmyprompts-score-card .fmp-action-bar::before {
+  content: '';
+  display: none; /* Hide icon by default */
+  font-size: 1.1em;
+}
+
+/* States for the action bar */
+#fixmyprompts-score-card .fmp-action-bar.is-waiting {
+  background: #f3f4f6; /* Lighter grey */
+  color: #4b5563; /* Force legible color */
+  border-color: #e5e7eb;
+}
+
+#fixmyprompts-score-card .fmp-action-bar.is-warning {
+  background: #fff5f5; /* Light red */
+  color: var(--fmp-score-color-bad);
+  border-color: var(--fmp-score-color-bad);
+}
+
+#fixmyprompts-score-card .fmp-action-bar.is-warning::before {
+  display: inline-block;
+  content: '⚠️';
+}
+
+#fixmyprompts-score-card .fmp-action-bar.is-success {
+  background: var(--fmp-score-color-good);
+  color: white;
+  border-color: var(--fmp-score-color-good);
+}
+
+#fixmyprompts-score-card .fmp-action-bar.is-success::before {
+  display: inline-block;
+  content: '👍';
 } 
