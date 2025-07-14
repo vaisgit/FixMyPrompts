@@ -17,55 +17,90 @@
   let observer = null;
 
   /**
+   * Programmatically sets the value of an input/textarea and dispatches the
+   * events necessary to notify frameworks like React that the value has changed.
+   * @param {HTMLElement} element The textarea or input element.
+   * @param {string} value The value to set.
+   */
+  function setNativeValueAndDispatchEvents(element, value) {
+    // Get the property descriptor for 'value' to check for a native setter.
+    const valueDescriptor = Object.getOwnPropertyDescriptor(Object.getPrototypeOf(element), 'value');
+
+    if (valueDescriptor && typeof valueDescriptor.set === 'function') {
+      // This is a standard input/textarea. Use the native setter trick for framework compatibility.
+      valueDescriptor.set.call(element, value);
+    } else {
+      // This is likely a contenteditable div. Fall back to setting textContent.
+      element.textContent = value;
+    }
+
+    // Dispatch a series of events to ensure the framework is notified of the change.
+    const events = [
+      new Event('input', { bubbles: true, cancelable: true }),
+      new Event('change', { bubbles: true, cancelable: true }),
+    ];
+    
+    events.forEach(event => element.dispatchEvent(event));
+  }
+
+  /**
    * Scores a prompt based on several dimensions like length, clarity, and specificity.
    * @param {string} text The prompt text to score.
    * @returns {{score: number, tips: string[]}} An object containing the score and improvement tips.
    */
   function scorePrompt(text) {
-    // Weights for each dimension
-    const lengthW = 25, clarityW = 15, specW = 15, vagueW = 15, dupW = 10, varietyW = 20;
+    // Weights are the maximum points for each dimension
+    const weights = { length: 25, clarity: 15, specific: 15, vague: 15, dup: 10, variety: 20 };
+    // Penalties start at 0 and are subtracted from 100
+    const penalties = { length: 0, clarity: 0, specific: 0, vague: 0, dup: 0, variety: 0 };
     const len = text.length;
-    let lengthScore;
-    if (len < 20 || len > 500) lengthScore = 0;
-    else if (len >= 50 && len <= 250) lengthScore = lengthW;
-    else lengthScore = Math.floor(lengthW / 2);  // partial credit if length is moderately off
-    // Regex patterns for other dimensions
-    const clarityRE = /[?.]|\b(?:explain|generate|compare|summarize|write|list)\b/i;
-    const specRE = /\bfor\b|\bto a\b|\bto an\b|\bas a\b|\bas an\b|\bin the style of\b|\bjson\b|\btable\b/i;
-    const vagueRE = /\b(?:good|nice|interesting|cool|beautiful)\b/i;
-    const repeatRE = /\b(\w+)\s+\1\b/i;
-    // Score each dimension
-    const clarityScore = clarityRE.test(text) ? clarityW : 0;
-    const specScore = specRE.test(text) ? specW : 0;
-    const constraintScore = vagueRE.test(text) ? 0 : vagueW;
-    const duplicationScore = repeatRE.test(text) ? 0 : dupW;
-    // Unique token ratio score
-    const tokens = text.toLowerCase().match(/\b\w+\b/g) || [];
-    const uniqueRatio = tokens.length ? new Set(tokens).size / tokens.length : 0;
-    let varietyScore;
-    if (uniqueRatio >= 0.8) varietyScore = varietyW;
-    else if (uniqueRatio >= 0.5) varietyScore = varietyW / 2;
-    else varietyScore = 0;
-    varietyScore = Math.floor(varietyScore);
-    // Total score out of 100
-    let totalScore = lengthScore + clarityScore + specScore + constraintScore + duplicationScore + varietyScore;
-    if (totalScore > 100) totalScore = 100;
-    // Gather top 3 penalties for tips
-    const penalties = [];
-    if (lengthScore < lengthW) {
-      penalties.push({
-        ptsLost: lengthW - lengthScore,
-        tip: len < 50 ? "Prompt is too short, expand context" : "Prompt is too long, narrow focus"
-      });
+
+    // 1. Length penalty (mirrors original logic)
+    if (len < 50 || len > 250) {
+      if (len < 20 || len > 500) {
+        penalties.length = weights.length; // 0/25 points
+      } else {
+        penalties.length = Math.floor(weights.length / 2); // 12/25 points
+      }
     }
-    if (clarityScore < clarityW) penalties.push({ ptsLost: clarityW, tip: "Make prompt a clear question or command" });
-    if (specScore < specW)   penalties.push({ ptsLost: specW,   tip: "Add audience or format" });
-    if (constraintScore < vagueW) penalties.push({ ptsLost: vagueW, tip: "Avoid vague adjectives" });
-    if (duplicationScore < dupW)  penalties.push({ ptsLost: dupW,  tip: "Remove repeated words or filler" });
-    if (varietyScore < varietyW)  penalties.push({ ptsLost: varietyW - varietyScore, tip: "Use more varied wording" });
-    penalties.sort((a, b) => b.ptsLost - a.ptsLost);
-    const tips = penalties.slice(0, 3).map(p => p.tip);
-    return { score: Math.round(totalScore), tips };
+
+    // 2. Clarity penalty (mirrors original logic)
+    if (!/[?.]|\\b(?:explain|generate|compare|summarize|write|list)\\b/i.test(text)) {
+      penalties.clarity = weights.clarity;
+    }
+
+    // 3. Specificity penalty (mirrors original logic)
+    if (!/\\b(?:for|to a|to an|as a|as an|in the style of|json|table)\\b/i.test(text)) {
+      penalties.specific = weights.specific;
+    }
+
+    // 4. Vagueness penalty (mirrors original logic)
+    if (/\\b(?:good|nice|interesting|cool|beautiful)\\b/i.test(text)) {
+      penalties.vague = weights.vague;
+    }
+
+    // 5. Repetition penalty (mirrors original logic)
+    if (/\\b(\\w+)\\s+\\1\\b/i.test(text)) {
+      penalties.dup = weights.dup;
+    }
+
+    // 6. Variety penalty (mirrors original logic)
+    const tokens = text.toLowerCase().match(/\\b\\w+\\b/g) || [];
+    const uniqueTokens = new Set(tokens);
+    const varietyRatio = tokens.length > 0 ? uniqueTokens.size / tokens.length : 1;
+    if (varietyRatio < 0.8) {
+      if (varietyRatio < 0.5) {
+        penalties.variety = weights.variety; // 0/20 points
+      } else {
+        penalties.variety = Math.floor(weights.variety / 2); // 10/20 points
+      }
+    }
+    
+    // Calculate final score by subtracting penalties from 100
+    const totalPenalty = Object.values(penalties).reduce((sum, p) => sum + p, 0);
+    const score = Math.max(0, 100 - totalPenalty);
+
+    return { score, breakdown: penalties };
   }
 
   // Debounce utility to limit how often a function is called.
@@ -80,7 +115,8 @@
   // Find the most likely main prompt input on the page.
   function findPromptTextarea() {
     const selectors = [
-      'textarea[data-id="root"]',          // ChatGPT
+      'textarea[name="prompt-textarea"]', // Specific selector for ChatGPT
+      'textarea[data-id="root"]',          // Old ChatGPT
       'textarea[placeholder*="Message"]',  // Common pattern
       'div[contenteditable="true"][aria-label*="prompt"]',
       'div[contenteditable="true"][aria-label*="message"]',
@@ -113,12 +149,20 @@
   // This function is called when the user types in the prompt textarea.
   const onPromptInput = debounce(async (event) => {
     const text = event.target.value || event.target.textContent || '';
+    
+    // If the score card is hidden (e.g., after a rewrite), show it again.
+    if (scoreCard && !scoreCard.classList.contains('visible')) {
+      scoreCard.classList.add('visible');
+    }
+
     if (text.trim() === '') {
       updateScoreCard(null);
+      chrome.storage.local.remove('fmpCurrentPromptData');
       return;
     }
-    const { score } = scorePrompt(text);
+    const { score, breakdown } = scorePrompt(text);
     updateScoreCard(score);
+    chrome.storage.local.set({ fmpCurrentPromptData: { score, breakdown, text } });
   }, 300);
 
   const onPromptKeyUp = (event) => {
@@ -252,6 +296,9 @@
     scoreGaugeFg = scoreCard.querySelector('#fmp-gauge-fg');
     scoreValueText = scoreCard.querySelector('#fmp-score-value');
     actionBar = scoreCard.querySelector('#fmp-action-bar');
+    actionBar.addEventListener('click', () => {
+      document.dispatchEvent(new CustomEvent('fmp-open-sidebar'));
+    });
     
     // Set initial gauge state
     setGauge(0, 'var(--fmp-score-color-base)');
@@ -457,5 +504,93 @@
     document.addEventListener('DOMContentLoaded', initialize);
   } else {
     initialize();
+  }
+
+  document.addEventListener('fmp-insert-placeholder', (e) => {
+    if (promptTextarea) {
+        const { selectionStart, selectionEnd } = promptTextarea;
+        const text = promptTextarea.value || promptTextarea.textContent;
+        const newText = text.slice(0, selectionStart) + e.detail + text.slice(selectionEnd);
+        promptTextarea.value = newText;
+        promptTextarea.focus();
+        promptTextarea.selectionStart = promptTextarea.selectionEnd = selectionStart + e.detail.length;
+    }
+  });
+
+  document.addEventListener('fmp-rewrite-prompt', async () => {
+    if (promptTextarea) {
+        const originalPrompt = promptTextarea.value || promptTextarea.textContent || '';
+
+        // 1. GUARD CLAUSE: Prevent API call if the prompt is empty.
+        if (originalPrompt.trim() === '') {
+            alert('Please enter a prompt before asking for a rewrite.');
+            return;
+        }
+
+        const rewriteBtn = document.getElementById('fmp-sb-rewrite-btn');
+        if (rewriteBtn) {
+          rewriteBtn.disabled = true;
+          rewriteBtn.textContent = 'Rewriting...';
+        }
+        
+        try {
+            const resp = await fetch('https://fixmyprompts.com/api/rewrite', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ originalPrompt, category: 'General' })
+            });
+            
+            if (!resp.ok) {
+              // Throw a more informative error to be caught below
+              throw new Error(`API returned status ${resp.status}: ${resp.statusText}`);
+            }
+            
+            const data = await resp.json();
+            if (!data.improvedPrompt) {
+              throw new Error('API response did not contain an improvedPrompt.');
+            }
+            
+            setNativeValueAndDispatchEvents(promptTextarea, data.improvedPrompt);
+            
+            // Instead of re-scoring, hide the score card and show a success toast.
+            if (scoreCard) {
+              scoreCard.classList.remove('visible');
+            }
+            showToast('✅ Your prompt is improved and ready to go!');
+
+        } catch(e) {
+            // 2. IMPROVED LOGGING: Provide detailed info in the console for debugging.
+            console.error("FMP Rewrite failed. Details logged below.");
+            console.error("Error object:", e);
+            console.error("Prompt that was sent:", originalPrompt);
+            alert("Sorry, the rewrite failed. Please check the browser console for more details.");
+        } finally {
+          if (rewriteBtn) {
+            rewriteBtn.disabled = false;
+            rewriteBtn.textContent = '⚡ One-click rewrite';
+          }
+        }
+    }
+  });
+
+  /**
+   * Creates and shows a temporary toast notification.
+   * @param {string} message The message to display in the toast.
+   */
+  function showToast(message) {
+    let toast = document.getElementById('fmp-toast');
+    if (toast) {
+      toast.remove(); // Remove existing toast to reset animation
+    }
+    
+    toast = document.createElement('div');
+    toast.id = 'fmp-toast';
+    toast.textContent = message;
+    document.body.appendChild(toast);
+
+    // The animation is handled by CSS, but we need to remove the element after.
+    setTimeout(() => {
+      toast.remove();
+    }, 3000); // Duration of the animation
   }
 })(); 

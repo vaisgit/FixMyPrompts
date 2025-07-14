@@ -1,0 +1,46 @@
+<!-- Browser Extension/sidebar.html -->
+<div id="fmp-sidebar" class="fmp-sidebar">
+  <div class="fmp-sb-header">
+    <img src="" alt="FixMyPrompts Logo" class="fmp-sb-logo">
+    <button class="fmp-sb-close">&times;</button>
+  </div>
+  <div class="fmp-sb-score-stripe">
+    <div class="fmp-sb-gauge">
+      <svg class="fmp-sb-gauge-svg" viewBox="0 0 100 100">
+        <circle class="fmp-sb-gauge-bg" cx="50" cy="50" r="40"></circle>
+        <circle class="fmp-sb-gauge-fg" id="fmp-sb-gauge-fg" cx="50" cy="50" r="40"></circle>
+      </svg>
+      <div class="fmp-sb-gauge-text">
+        <span id="fmp-sb-score-value">-</span>
+        <span id="fmp-sb-score-total">/100</span>
+      </div>
+    </div>
+  </div>
+  <div class="fmp-sb-content">
+    <div id="fmp-sb-bad-list-container">
+      <h3 class="fmp-sb-list-header">Needs attention ❌</h3>
+      <ul id="fmp-sb-bad-list" class="fmp-sb-list">
+      </ul>
+    </div>
+    <div id="fmp-sb-good-list-container">
+      <h3 class="fmp-sb-list-header">Looking good ✓</h3>
+      <ul id="fmp-sb-good-list" class="fmp-sb-list">
+      </ul>
+    </div>
+  </div>
+  <div class="fmp-sb-actions">
+    <button id="fmp-sb-rewrite-btn" class="fmp-sb-action-btn fmp-sb-btn-primary">⚡ One-click rewrite</button>
+    <button id="fmp-sb-edit-btn" class="fmp-sb-action-btn fmp-sb-btn-secondary">✍ I’ll edit</button>
+  </div>
+  <div class="fmp-sb-feedback">
+    <span>How did we do?</span>
+    <div class="fmp-sb-feedback-icons">
+      <button id="fmp-sb-feedback-up">👍</button>
+      <button id="fmp-sb-feedback-down">👎</button>
+    </div>
+  </div>
+  <div class="fmp-sb-footer">
+    © Fix My Prompts • <a href="https://fixmyprompts.com" target="_blank">Website</a> • <a href="https://chrome.google.com/webstore" target="_blank">Chrome Web Store</a>
+  </div>
+</div>
+<div id="fmp-sidebar-overlay"></div> 

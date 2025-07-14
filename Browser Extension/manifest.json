@@ -1,51 +1,49 @@
 {
   "manifest_version": 3,
-  "name": "FixMyPrompts Helper",
-  "version": "1.1.0",
-  "description": "Refine prompts in ChatGPT, Claude, Gemini, or Grok with a live quality score.",
-  "icons": {
-    "16": "icon16.png",
-    "48": "icon48.png",
-    "128": "icon128.png"
-  },
+  "name": "Fix My Prompts",
+  "version": "1.4",
+  "description": "Get instant feedback on your AI prompts and improve them with one click.",
   "permissions": [
-    "storage"
+    "storage",
+    "activeTab",
+    "scripting"
   ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icon16.png",
+      "48": "icon48.png",
+      "128": "icon128.png"
+    }
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
   "content_scripts": [
     {
       "matches": [
         "https://chatgpt.com/*",
         "https://claude.ai/*",
         "https://gemini.google.com/*",
-        "https://grok.xai.com/*",
+        "https://bard.google.com/*",
         "https://www.perplexity.ai/*"
       ],
-      "js": [
-        "content.js"
-      ],
-      "css": [
-        "styles.css"
-      ],
-      "run_at": "document_idle"
+      "js": ["content.js", "sidebar.js"],
+      "css": ["styles.css", "sidebar.css"]
     }
   ],
-  "background": {
-    "service_worker": "background.js"
-  },
   "host_permissions": [
-    "https://fixmyprompts.com/api/rewrite"
+    "https://fixmyprompts.com/*"
   ],
   "web_accessible_resources": [
     {
-      "resources": [
-        "logo.png",
-        "icon16.png",
-        "icon48.png",
-        "icon128.png"
-      ],
-      "matches": [
-        "<all_urls>"
-      ]
+      "resources": ["sidebar.html", "logo.png"],
+      "matches": ["<all_urls>"]
     }
-  ]
+  ],
+  "icons": {
+    "16": "icon16.png",
+    "48": "icon48.png",
+    "128": "icon128.png"
+  }
 } 

@@ -9,10 +9,17 @@ Guidelines:
 - Structure the prompt logically
 - Include desired format/style when relevant
 - Make it actionable and clear
-- Preserve the original intent while enhancing clarity
-- Limit the improved prompt to 500 characters maximum
+- Preserve the original intent while enhancing clarity.
+- Limit the improved prompt to 500 characters maximum.
 
-Transform the user's input into a much better prompt:`;
+IMPORTANT: You MUST return the output as a single, valid JSON object. Do not include any other text, greetings, or explanations before or after the JSON. The JSON object must have a single key called "improvedPrompt".
+
+Example of your required output format:
+{
+  "improvedPrompt": "Your rewritten, high-quality prompt here."
+}
+
+Now, transform the user's input:`;
 
 export const categoryInstructions = {
   'General': 'Focus on clarity, specificity, and actionable instructions. Add context that would help any AI understand exactly what is needed. Ensure the response will be comprehensive and well-structured.',

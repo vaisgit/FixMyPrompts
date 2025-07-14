@@ -1,8 +1,7 @@
 // background.js
 // Service worker for the Chrome extension.
-// Handles updating the action badge based on the prompt quality score.
+// Handles updating the action badge and forwarding feedback.
 
-// Listen for messages from the content script.
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.type === 'PROMPT_SCORE' && sender.tab) {
     const { score } = request;
@@ -11,7 +10,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     // If the score is null, it means the textarea is empty.
     if (score === null) {
       chrome.action.setBadgeText({ text: '–', tabId });
-      chrome.action.setBadgeBackgroundColor({ color: '#9e9e9e', tabId }); // Material Grey
+      chrome.action.setBadgeBackgroundColor({ color: '#9e9e9e', tabId });
     } else {
       // The score is a number, so update the badge text and color.
       const text = String(Math.round(score));
@@ -27,8 +26,19 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       chrome.action.setBadgeText({ text, tabId });
       chrome.action.setBadgeBackgroundColor({ color, tabId });
     }
+  } else if (request.type === 'FEEDBACK') {
+    // Fire-and-forget feedback call to the API
+    fetch('https://fixmyprompts.com/api/feedback', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        value: request.value,
+        score: request.score,
+        ts: new Date().toISOString()
+      })
+    }).catch(err => console.error('Feedback API call failed:', err));
   }
-  // Keep the message channel open for async response, though not used here.
+  // Keep the message channel open for other potential async responses
   return true;
 });
 
